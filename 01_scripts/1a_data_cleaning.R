@@ -29,7 +29,7 @@ pacman::p_load(
   glue)       # elegant way t0 paste strings
 
 # Get helper functions
-source("01_data_cleaning/1b_code/cleaning_functions.R")
+source("00_input/0a_source_code/cleaning_functions.R")
 
 # define path using here package
 data_path <- here(
@@ -37,18 +37,19 @@ data_path <- here(
 
 # the ID's of those who withdrew from the study
 withdrawn <- read_csv(
-  file.path(data_path, "1a_data/ukb_biobank_withdrew.csv"))[1] |>  pull()
+  file.path(data_path, "00_input/0b_data/raw/ukb_biobank_withdrew.csv"))[1] |> 
+  pull()
 
 # load UK Biobank dataset
 ukb_mess <- readr::read_rds(
-  file.path(data_path, "1a_data/ukb4789_280521.Rdata")) |>
+  file.path(data_path, "00_input/0b_data/raw/ukb4789_280521.Rdata")) |>
   # this line removes those withdrawn from the study
   # the %nin% function just means 'not in'
   filter(f.eid %nin% withdrawn) 
 
 # load the SOC and NS-SEC derivation data
 soc_nssec <- readxl::read_xlsx(
-  file.path(data_path, "1a_data/soc2000_nssec_derivation.xlsx")) |> 
+  file.path(data_path, "00_input/0b_data/raw/soc2000_nssec_derivation.xlsx")) |> 
   janitor::clean_names()
 
 # The variables in UKB are cleaned by series of functions that are defined in 
@@ -119,7 +120,7 @@ dataMaid::makeDataReport(
   mode = c("summarize", "visualize"),
   codebook = TRUE,
   replace = TRUE,
-  file = "01_data_cleaning/1c_cleaned_data/uk_biobank_codebook.Rmd", 
+  file = "00_input/0b_data/cleaned/uk_biobank_codebook.Rmd", 
   reportTitle = paste0("uk_biobank_codebook_", format(Sys.time(), "%Y-%b-%d"))
 )
 
@@ -129,6 +130,5 @@ dataMaid::makeDataReport(
 # hash-tag and run the code.
 # save clean data in rds format with date stamp  (Size: ~40MB)
 saveRDS(ukb_final,
-        paste0("01_data_cleaning/1c_cleaned_data/",
-               "uk_biobank_cleaned_",
+        paste0("00_input/0b_data/cleaned/uk_biobank_cleaned_",
                format(Sys.time(), "%Y-%b-%d"), ".rds"))

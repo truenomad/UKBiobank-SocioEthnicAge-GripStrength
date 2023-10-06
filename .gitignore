@@ -1,0 +1,8 @@
+
+00_input/0b_data/cleaned/uk_biobank_cleaned_2023-Oct-05.rds
+00_input/0b_data/cleaned/uk_biobank_imp_df.Rdata
+00_input/0b_data/raw/ukb_biobank_withdrew.csv
+00_input/0b_data/raw/ukb4789_280521.Rdata
+00_input/0b_data/cleaned/uk_biobank_codebook.pdf
+00_input/0b_data/cleaned/uk_biobank_codebook.Rmd
+.Rproj.user

@@ -8,21 +8,26 @@ This repository contains the research code and data related to our study on the 
 
 ```
 ├── README.md
-├── 01_Data_Cleaning/
-│   ├── 01a_Raw_Data/
-│   ├── 01b_Code/
-│   └── 01b_Cleaned_Data/
-├── 02_Data_Modelling/
-│   ├── 02a_Code/
-│   └── 02b_Model_Outputs/
-├── 03_Tables/
-│   ├── 03a_Code/
-│   └── 03b_Table_Outputs/
-├── 04_Visualisations/
-│   ├── 04a_Code/
-│   └── 04b_Visualisation_Outputs/
-└── LICENSE
+├── 00_input/
+│   ├── 0a_source_code/
+│   │   ├── cleaning_functions.R
+│   │   ├── modelling_functions.R
+│   │   └── visualisation_functions.R
+│   └── 0b_data/
+│       ├── cleaned/
+│       └── raw/
+├── 01_scripts/
+│   ├── 1a_data_cleaning.R
+│   ├── 1b_multiple_imputation.R
+│   ├── 1c_produce_descriptive_tables.R
+│   ├── 1d_produce_regression_tables.R
+│   └── 1e_produce_forestplots.R
+└── 02_outputs/
+    ├── 2a_model_outputs/
+    ├── 2b_table_outputs/
+    └── 2c_visualisation_outputs/
 ```
+
 
 ## Installation
 
@@ -32,7 +37,7 @@ To clone this repository:
 
 ## Usage
 
-- Start with the data cleaning and imputation code located in `01_Data_Cleaning/01b_Code/`.
-- Proceed to data modelling in `02_Data_Modelling/02a_Code/`.
-- Generate tables using the code in `03_Tables/03a_Code/`.
-- Create visualisations with the code located in `04_Visualisations/04a_Code/`.
+- Start with the data cleaning and imputation code located in `01_scripts/1a_data_cleaning.R` and `01_scripts/1b_multiple_imputation.R`.
+- Proceed to data modelling with the scripts in `01_scripts/`.
+- Generate descriptive and regression tables using the code in `01_scripts/1c_produce_descriptive_tables.R` and `01_scripts/1d_produce_regression_tables.R`.
+- Create visualisations with the code located in `01_scripts/1e_produce_forestplots.R`.

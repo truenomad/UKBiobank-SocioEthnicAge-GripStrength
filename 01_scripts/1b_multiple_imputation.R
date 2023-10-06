@@ -18,12 +18,13 @@ pacman::p_load(
 
 # load clean data
 ukb <- readr::read_rds(
-  "01_data_cleaning/1c_cleaned_data/uk_biobank_cleaned_2023-Oct-05.rds")
+  "00_input/0b_data/cleaned/uk_biobank_cleaned_2023-Oct-05.rds")
 
 # pre-process data
 ukb <- ukb |>
   filter(
-    if_all(c(handgrip_max_0_imp, sex, age_group_0, ethnic_group), ~ !is.na(.)))  |> 
+    if_all(
+      c(handgrip_max_0_imp, sex, age_group_0, ethnic_group), ~ !is.na(.)))  |> 
   # remove outliers (it's implausible to be 75cm tall)
   mutate(height_0 = ifelse(height_0 == 75, NA, height_0)) %>%
   # select relevant variables for imputation
@@ -108,8 +109,8 @@ ukb_imp <- ukb_imp |>
 # save imputed data
 miceadds::save.data(
   ukb_imp,
-  filename = "ukb_mid",
-  type = "Rdata", path = "01_data_cleaning/1c_cleaned_data/")
+  filename = "uk_biobank_imp_df",
+  type = "Rdata", path = "00_input/0b_data/cleaned/")
 
 # get session information
 sessionInfo()

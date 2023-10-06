@@ -68,6 +68,9 @@ process_age_cohort_vars <- function(df) {
       age_2 = structure(age_2, label = "Age, wave 2"),
       age_3 = structure(age_3, label = "Age, wave 3"),
       f.eid = structure(f.eid, label = "Participant ID")
+    ) |> 
+    mutate(
+      sex = ifelse(sex == "Men", "Men", " Women")
     )
   
   # Create birth cohort variable
@@ -157,6 +160,26 @@ process_ethnicity_vars <- function(df) {
       white_BAME = factor(white_BAME, levels = c(
         "White", "BAME")
       )) |> 
+    mutate(ethnic_group2 = case_when(
+      ethnicity == "White" | ethnicity == "British" |
+        ethnicity == "Irish" | ethnicity == "Any other white background" ~ "White British",
+      ethnicity == "Indian" ~  "Indian", 
+      ethnicity == "Pakistani" ~  "Pakistani", 
+      ethnicity == "Caribbean" ~  "Black Caribbean", 
+      ethnicity == "African" ~  "Black African", 
+      ethnicity == "Chinese" ~  "Chinese", 
+      ethnicity == "Mixed" | ethnicity == "White and Black Caribbean" |
+        ethnicity == "White and Black African" | ethnicity == "White and Asian" |
+        ethnicity == "Any other mixed background" ~ "Mixed",
+      ethnicity == "Other ethnic group" | ethnicity == "Asian or Asian British" |
+        ethnicity == "Bangladeshi" |  ethnicity == "Any other Asian background" | 
+        ethnicity == "Black or Black British" |
+        ethnicity == "Any other Black background" ~ "Other"),
+      ethnic_group2 = factor(
+        ethnic_group2, levels = c(
+          "White British", "Indian", 
+          "Pakistani", "Black Caribbean",
+          "Black African", "Chinese", "Mixed", "Other"))) |> 
     mutate(
       ethnic_group = structure(ethnic_group, label = "Ethnicity group"),
       ethnicity = structure(ethnicity, label = "Ethnicity"),
@@ -610,6 +633,7 @@ process_deprivation_vars <- function(data) {
       imd_quantile = structure(imd_quantile, label = "IMD quantiles, baseline"),
       town_dep_index = structure(town_dep_index, label = "Townsend deprivation index, baseline")
     ) |> 
+    mutate(region_england = ifelse(is.na(imd_england), "No", "Yes")) |> 
     select(
       -imd_wales_grps, -imd_wales_quintile, 
       -imd_eng_grps, -imd_eng_quintile,
@@ -1005,7 +1029,7 @@ process_sedentary_vars <- function(df) {
     )) |> 
     select(-sedentary_hours_day_0_cat, -sedentary_hours_day_0_log) |> 
     mutate(sedentary_hours_day_0 = structure(sedentary_hours_day_0, 
-                                                 label = "Sedentary behaviour (hours/day) categories")
+                                             label = "Sedentary behaviour (hours/day) categories")
     )
   
   
@@ -1219,12 +1243,12 @@ process_gripstrength_vars <- function(df) {
   #
   # # the mean for the bottom fifth quartile is 35.9 kgs for men and 22.1kgs for women.
   # # Now use this value for this unable to perfromgrip strength due th ealth reaosns
-  # male
+  # Men
   
   df <-  df |>
     mutate(handgrip_max_0_imp = case_when(
-      rsn_grip_missing_cat == "Unable for health reasons" & sex == "Male" ~ 29.5,
-      rsn_grip_missing_cat == "Unable for health reasons" & sex == "Female" ~ 17,
+      rsn_grip_missing_cat == "Unable for health reasons" & sex == "Men" ~ 29.5,
+      rsn_grip_missing_cat == "Unable for health reasons" & sex == "Women" ~ 17,
       TRUE ~ handgrip_max_0
     ))|>
     select(-matches("f.2004[3|4].0.0"), -matches("handgrip_[left]"),
@@ -1238,7 +1262,7 @@ process_gripstrength_vars <- function(df) {
       handgrip_max_0_imp := structure(
         handgrip_max_0_imp,
         label = "Maximum handgrip strength (kg) (imputed), baseline"))
-
+  
   return(df)
 }
 
