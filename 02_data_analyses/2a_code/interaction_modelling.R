@@ -1,6 +1,6 @@
 ################################################################################
 #                                                                              #
-# Purpose:       Ineractions modelling                                         #
+# Purpose:       Interactions modelling                                        #
 #                                                                              #
 # Author:        Mo Yusuf (https://github.com/truenomad)                       #
 # Contact:       mohamedayusuf87@gmail.com                                     #
@@ -13,11 +13,15 @@
 # loads relevant packages using the pacman package
 pacman::p_load(
   tidyverse, # data management and visualization
-  gtsummary
-) # for beautiful tables
+  gtsummary,  # for beautiful tables
+  pbmcapply,  # for parallel processing
+  purrr,      # for purrr functions
+  tidyr,      # for tidying mixed models
+  broom.mixed, # for tidying mixed models
+  mice)      # for managing imputation data
 
 # load custom functions
-source("02_data_analyses/2a_code/modelling_functions.R")
+source("00_source_code/modelling_functions.R")
 
 # Get imputed dataset
 ukb_imp <- loadRData("01_data_cleaning/1c_cleaned_data/uk_biobank_imp_df.Rdata")
@@ -41,7 +45,7 @@ res_edu_age_ethn <- run_models(
 )
 
 # combine results
-education <- bind_rows(res_edu_age, res_edu_age_ethn)
+res_edu <- bind_rows(res_edu_age, res_edu_age_ethn)
 
 ################################################################################
 ##                        IMD & grip strength                                 ##
@@ -62,7 +66,7 @@ res_imd_age_ethn <- run_models(
 )
 
 # combine results
-imd <- bind_rows(res_imd_age, res_imd_age_ethn)
+res_imd <- bind_rows(res_imd_age, res_imd_age_ethn)
 
 ################################################################################
 #########################       Save results      ##############################
@@ -70,5 +74,5 @@ imd <- bind_rows(res_imd_age, res_imd_age_ethn)
 
 # save results into a list
 saveRDS(
-  list(education, imd), 
+  list(edu = res_edu, imd = res_imd), 
   "02_data_analyses/2b_model_outputs/res_grip_sep_interact.rds")

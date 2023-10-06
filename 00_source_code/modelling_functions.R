@@ -1,4 +1,3 @@
-
 # Function to load RData files -------------------------------------------------
 
 loadRData <- function(fileName){
@@ -23,10 +22,10 @@ run_models <- function(data, exposure,
   
   # set model names
   model_names <- c(
-    "Model 1: unadjusted",
-    "Model 2: adjusted by height",
-    "Model 3: model 2 + bodysize",
-    "Model 4: model 3 + health and behavioural factors"
+    "M1: unadjusted",
+    "M2: adjusted by height",
+    "M3: M2 + bodysize",
+    "M4: M3 + health and behavioural factors"
   )
   
   # Use parallel computing to fit the regression models for each combination 
@@ -72,33 +71,42 @@ clean_results <- function(results, exposure, interaction_vars) {
            term, estimate, conf.low, conf.high) %>%
     mutate(term = ifelse(term == "(Intercept)",
                          ifelse(exposure == "education", 
-                                "Degree (ref)", "1 (ref)"),
+                                "Degree & higher (ref)",
+                                "1 (most affluent) (ref)"),
                          term)) %>%
     mutate(term = case_when(
       exposure == "education" & 
         term == "educationA-levels, professional, or equiv." ~ 
-        "A-levels, professional, or equiv.",
+        "A-levels, profess., or equiv.",
       exposure == "education" & 
         term == "educationO-levels, CSEs, or equiv." ~ 
         "O-levels, CSEs, or equiv.",
       exposure == "education" & 
         term == "educationNo qualification" ~ "No qualification",
-      exposure == "imd" & term == "imd_quantile2" ~ "2",
-      exposure == "imd" & term == "imd_quantile3" ~ "3",
-      exposure == "imd" & term == "imd_quantile4" ~ "4",
-      exposure == "imd" & term == "imd_quantile5 (least affluent)" ~ "5",
+      exposure == "imd_quantile" & term == "imd_quantile2" ~ "2",
+      exposure == "imd_quantile" & term == "imd_quantile3" ~ "3",
+      exposure == "imd_quantile" & term == "imd_quantile4" ~ "4",
+      exposure == "imd_quantile" & term == "imd_quantile5 (least affluent)" ~ "5 (least affluent)",
       TRUE ~ term
     )) %>%
     mutate(across(c(estimate, conf.low, conf.high), 
                   ~ replace(., str_detect(term, "(ref)"), 0))) %>%
     mutate(across(starts_with("estim") | starts_with("conf"), 
                   \(x) round(x, digits = 3))) %>% 
-    mutate(term = factor(term)) %>%
+    mutate(term = factor(
+      term,
+      levels = c(
+        "Degree & higher (ref)",
+        "A-levels, profess., or equiv.",
+        "O-levels, CSEs, or equiv.",
+        "No qualification",
+        "1 (most affluent) (ref)", "2", "3", "4", "5 (least affluent)"
+      ) )) %>%
     mutate(model = factor(model)) %>%
     mutate(age_group_0 = factor(paste0(age_group_0, "y"), levels = c(
       "Below 45y", "45 to <50y", "50 to <55y", 
       "55 to <60y", "60 to <65y", "Above 65y"
-    ))) 
+    ))) |> ungroup()
   
   # determine the model stratification lable based on 
   # whether ethnicity is used for interaction

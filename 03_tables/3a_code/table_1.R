@@ -47,7 +47,7 @@ ukb <- ukb_imp$data |>
 ##                                   Table 1:                                 ##
 ################################################################################
 
-# Table 1 - Population characteristic  ------------------------------------
+# Table 1 - Population characteristic  -----------------------------------------
 
 tbl_1 <- ukb |>
   tbl_summary(
@@ -86,6 +86,10 @@ tbl_1 <- ukb |>
   add_overall() %>%
   add_p() %>%
   modify_spanning_header(all_stat_cols() ~ "**N (%)**", ) %>%
+  modify_header(stat_0 = "**Overall**", 
+                stat_1 = "**Female**",
+                stat_2 = "**Male**",
+                p.value = "**p-val**") |> 
   italicize_levels() %>%
   bold_labels() %>%
   tbl_butcher() %>%
@@ -111,4 +115,14 @@ tbl_1 <- ukb |>
   modify_footnote(
     everything() ~
       "Maximum N, though N varies due to missing data on some covariates"
-  )
+  ) |> 
+  modify_caption(
+    paste("Table 1: Characteristics of the UK Biobank participants included",
+          "in analyses (maximum N = 497,787;",
+          "Female, N = 271,087, Male, N = 226,700)"),
+  ) |>
+  as_flex_table() |> 
+  # save table
+  flextable::save_as_docx(
+    path = "03_tables/3b_table_outputs/table_1_pop_charactdristics_ukb.docx")
+
